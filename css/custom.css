@@ -1,0 +1,142 @@
+/* Brand Corporations -- supplementary rules on top of the Stuxen design
+   system (css/style.css). Restores hover micro-interactions that in the
+   original template were driven by Webflow's IX2 JS engine, and turns the
+   blog carousel into a native horizontal scroller so it works without it. */
+
+/* offset anchor-link targets so the fixed navbar doesn't cover the section title */
+#about, #services, #projects, #contact { scroll-margin-top: 110px; }
+
+/* ---- opaque navbar after scrolling past the hero (transparent by default,
+   matching the Stuxen design, so it doesn't fight with section content
+   underneath once the fixed bar overlaps a section other than the hero) ---- */
+.navbar { transition: background-color .25s ease, box-shadow .25s ease; }
+.navbar.nav-scrolled {
+  background-color: var(--white) !important;
+  box-shadow: 0 2px 16px rgba(33, 33, 33, .08);
+}
+
+/* ---- logo sizing --------------------------------------------------------
+   Stuxen's own logo was a small square SVG mark with no defined width, so
+   the design system never constrains .nav-logo/.footer-logo at desktop
+   widths. Our replacement is a wide raster wordmark, so it needs an
+   explicit cap or it renders at native (huge) size. */
+.nav-logo-link { max-width: 130px; }
+.nav-logo { width: 100%; height: auto; max-height: 46px; object-fit: contain; }
+.footer-logo-link { max-width: 130px; }
+.footer-logo { width: 100%; height: auto; max-height: 40px; object-fit: contain; }
+
+/* ---- smooth transitions for elements that swap opacity/transform on hover ---- */
+.services-v1-img-link,
+.services-arrow-link,
+.project-v1-arrow-wrap,
+.project-v1-categories-wrap,
+.project-v1-img-overly,
+.project-v1-title-bg,
+.primary-btn-text._01,
+.primary-btn-text._02,
+.primary-btn-arrow._01,
+.primary-btn-arrow._02,
+.more-btn-text._01,
+.more-btn-text._02,
+.more-btn-arrow._01,
+.more-btn-arrow._02,
+.footer-menu._01,
+.footer-menu._02 {
+  transition: opacity .3s ease, transform .3s ease;
+}
+
+/* services row: reveal thumbnail + arrow on hover */
+.services-v1-wrapper:hover .services-v1-img-link,
+.services-v1-wrapper:hover .services-arrow-link {
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) scale3d(1, 1, 1) !important;
+}
+
+/* project card: reveal arrow + category pill, dim overlay less, tint title bg */
+.project-v1-card:hover .project-v1-arrow-wrap,
+.project-v1-card:hover .project-v1-categories-wrap,
+.project-v1-card:hover .project-v1-title-bg {
+  opacity: 1 !important;
+}
+
+/* primary / more buttons: classic vertical text swap on hover */
+.primary-button:hover .primary-btn-text._01,
+.more-button:hover .more-btn-text._01 {
+  transform: translate3d(0, -110%, 0) !important;
+}
+.primary-button:hover .primary-btn-text._02,
+.more-button:hover .more-btn-text._02 {
+  transform: translate3d(0, 0%, 0) !important;
+}
+.primary-button:hover .primary-btn-arrow._01 {
+  transform: translate3d(110%, 0, 0) !important;
+}
+.primary-button:hover .primary-btn-arrow._02 {
+  transform: translate3d(0%, 0, 0) !important;
+}
+.more-button:hover .more-btn-arrow._01 {
+  opacity: 0 !important;
+}
+.more-button:hover .more-btn-arrow._02 {
+  opacity: 1 !important;
+}
+
+/* footer links: same vertical swap */
+.footer-menu-link:hover .footer-menu._01 {
+  transform: translate3d(0, -110%, 0) !important;
+}
+.footer-menu-link:hover .footer-menu._02 {
+  transform: translate3d(0, 0%, 0) !important;
+}
+
+/* faq icon swap on active tab */
+.faq-tabs-link.w--current .faq-icon._01 { opacity: 0 !important; }
+.faq-tabs-link.w--current .faq-icon._02 { opacity: 1 !important; }
+.faq-icon._02 { opacity: 0; }
+
+/* ---- mobile nav (no Webflow runtime, so we drive it ourselves) ---- */
+.w-nav-menu { transition: opacity .25s ease; }
+@media screen and (max-width: 991px) {
+  .nav-menu.w-nav-menu:not(.nav-open) { display: none; }
+  .nav-menu.w-nav-menu.nav-open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    padding: 20px;
+    box-shadow: 0 12px 24px rgba(33, 33, 33, .12);
+  }
+}
+
+/* ---- blog: native horizontal scroller instead of the Webflow slider engine ---- */
+.blog-v1-slider { overflow: visible; padding-bottom: 30px; }
+.blog-v1-mask {
+  display: flex;
+  gap: 24px;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-snap-type: x proximity;
+  padding-bottom: 10px;
+  -webkit-overflow-scrolling: touch;
+}
+.blog-v1-slide {
+  flex: 0 0 auto;
+  width: 380px;
+  max-width: 85vw;
+  margin-right: 0 !important;
+  scroll-snap-align: start;
+}
+.blog-v1-slider-arrow.w-slider-arrow-left,
+.blog-v1-slider-arrow.w-slider-arrow-right {
+  display: flex !important;
+  cursor: pointer;
+}
+.blog-v1-slide-nav { display: none !important; }
+
+/* testimonials tab: pointer + active-state cue */
+.testimonials-tabs-link { cursor: pointer; }
+.faq-tabs-link { cursor: pointer; }

@@ -1,0 +1,10 @@
+{
+  "name": "brand-corporations-website",
+  "version": "0.1.0",
+  "description": "Brand Corporations marketing site (static HTML/CSS/JS)",
+  "private": true,
+  "scripts": {
+    "dev": "npx --yes serve -l 3000 .",
+    "start": "npx --yes serve -l 3000 ."
+  }
+}
