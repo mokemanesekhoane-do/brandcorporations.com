@@ -21,14 +21,16 @@ Then visit http://localhost:3000.
 
 ```
 index.html          Single-page site (all sections)
+assets/projects/      Real portfolio work — 10 category folders, responsive WebP
+assets/clients/       17 client logos, background-stripped transparent WebP
 css/style.css        Stuxen's own generated design system (colors, type,
                       spacing, components) — reused as-is for exact fidelity
-css/custom.css        Supplementary rules: hover micro-interactions, the
-                      scrolled-navbar background, mobile menu, and a native
-                      horizontal scroller for the blog carousel
-js/custom.js          Vanilla JS: mobile nav toggle, tab switching (FAQ +
-                      testimonials), blog carousel arrows, scrolled-navbar
-                      class toggle
+css/custom.css        Supplementary rules: brand-blue token override, hover
+                      micro-interactions, navbar, services, contact form,
+                      footer, articles + reader overlay, portfolio lightbox
+js/custom.js          Vanilla JS: mobile nav toggle, scroll spy + scroll
+                      progress, FAQ accordion, portfolio lightbox, article
+                      reader overlay, contact-form validation
 assets/brand/         Real Brand Corporations assets (logo, service icons,
                       creative photography)
 assets/stuxen/        Stuxen template's own decorative/demo assets (icons,
@@ -41,7 +43,9 @@ assets/stuxen/        Stuxen template's own decorative/demo assets (icons,
 Typeface is Poppins (loaded from Google Fonts). Colors and spacing come
 from CSS custom properties defined in `css/style.css`:
 
-- `--primary-clr: #5235f6` — accent (buttons, links, highlights)
+- `--primary-clr: #0878b8` — accent (buttons, links, highlights), Brand's own
+  logo blue. Overridden in `custom.css`; `style.css` still declares Stuxen's
+  original `#5235f6` purple.
 - `--secondary-clr: #212121` — primary text
 - `--white-smoke` — page background
 - `--dark-70` / `--dark-16` / `--dark-12` — muted text / border tints
@@ -54,22 +58,32 @@ custom properties or the relevant `.class-name` rule, not rewriting markup.
 
 Real content (pulled from the current brandcorporations.com):
 - Hero copy, "10 Years of Experience" badge
-- About section mission statement + stats (280+ projects, 120+ client
+- About section mission statement + stats (100+ projects, 30+ client
   testimonials, 100% happy clients, 10+ years)
-- All four services (Brand Identity, Marketing Strategy, Web Design,
-  Branding) with real descriptions
-- Footer contact details (Thetsane Office Park, Maseru, Lesotho;
+- Five service groups (Brand & Creative; Marketing & Advertising; Events &
+  Partnerships; Production & Visibility; Digital & Web) covering 17 offerings
+- Footer + contact-form details (Thetsane Office Park, Maseru, Lesotho;
   +266 50208010; info@brandcorporations.com)
-- Hero/About imagery (Brand's own creative photography)
 
-**Placeholder content** — marked with `<!-- PLACEHOLDER -->` comments in
-`index.html`, needs to be replaced before this goes live:
-- Projects/portfolio section (5 sample case studies, Stuxen demo images —
-  the real Projects page wasn't available when this was built)
-- Testimonials (3 sample quotes + stock photos)
-- Blog/News section (6 sample article titles)
+- Hero/About imagery (Brand's own creative photography, Stuxen's original
+  three-up hero slider layout)
+- Portfolio — 45 real project images across 10 categories (Campaign, Corporate
+  Identity, Digital Media, Annual Reports, Signage, Vehicle Branding, Office
+  Branding, Print, Promotional Items, Web Development), presented as ten
+  category cards that open a lightbox gallery
+- "Trusted by" client strip — 17 real client logos
+- News & insights — 3 real articles ("The True State of Marketing in the
+  African Context" by Matseliso Nkopane; "The Contribution of AI to Marketing"
+  by Sekhoane Mokemane; "When Your Best Design Is Not the Client's Best
+  Solution" by Raymond), each opening a full-text reader overlay. Cards use
+  icons rather than thumbnails.
+
+**Still outstanding** before this goes live:
+- The Get in touch form has no backend — it validates client-side then falls
+  back to `mailto:`. Point `data-endpoint` on `#get-in-touch` at a form
+  service (Formspree, Netlify Forms, Basin) to have it POST instead.
 - FAQ answers (generic-but-reasonable; worth a review pass)
-- Social links (point to generic facebook.com/twitter.com/etc. — swap in
+- Social links (point to generic facebook.com/instagram.com/etc. — swap in
   real handles)
 
 ## Licensing note
