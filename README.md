@@ -23,8 +23,8 @@ Then visit http://localhost:3000.
 index.html          Single-page site (all sections)
 assets/projects/      Real portfolio work — 10 category folders, responsive WebP
 assets/clients/       17 client logos, background-stripped transparent WebP
-css/style.css        Stuxen's own generated design system (colors, type,
-                      spacing, components) — reused as-is for exact fidelity
+css/core.css          Original stylesheet: reset, design tokens, layout
+                      primitives and shared components (22KB)
 css/custom.css        Supplementary rules: brand-blue token override, hover
                       micro-interactions, navbar, services, contact form,
                       footer, articles + reader overlay, portfolio lightbox
@@ -33,26 +33,24 @@ js/custom.js          Vanilla JS: mobile nav toggle, scroll spy + scroll
                       reader overlay, contact-form validation
 assets/brand/         Real Brand Corporations assets (logo, service icons,
                       creative photography)
-assets/stuxen/        Stuxen template's own decorative/demo assets (icons,
-                      arrows, placeholder photography) — renamed from their
-                      original CDN hashes to descriptive filenames
+assets/stuxen/        The few remaining decorative assets (arrows, icons,
+                      hero/services backgrounds) kept from the template pass
 ```
 
 ## Design system
 
 Typeface is Poppins (loaded from Google Fonts). Colors and spacing come
-from CSS custom properties defined in `css/style.css`:
+from CSS custom properties defined on `:root` in `css/core.css`:
 
 - `--primary-clr: #0878b8` — accent (buttons, links, highlights), Brand's own
-  logo blue. Overridden in `custom.css`; `style.css` still declares Stuxen's
-  original `#5235f6` purple.
+  logo blue. Set in `custom.css`, overriding the base value in `core.css`.
 - `--secondary-clr: #212121` — primary text
 - `--white-smoke` — page background
 - `--dark-70` / `--dark-16` / `--dark-12` — muted text / border tints
 
-`css/style.css` is Webflow's own compiled output for the Stuxen template, so
-changing layout/spacing/typography is usually a matter of adjusting the CSS
-custom properties or the relevant `.class-name` rule, not rewriting markup.
+`css/core.css` is hand-written and carries only what this site uses, so
+changing layout/spacing/typography is usually a matter of adjusting a token or
+the relevant `.class-name` rule, not rewriting markup.
 
 ## Content status
 
@@ -88,8 +86,12 @@ Real content (pulled from the current brandcorporations.com):
 
 ## Licensing note
 
-Stuxen is a commercial Webflow template (single-use license, by Digitexen).
-This repo reuses its compiled CSS and section structure directly for design
-fidelity. Before publishing this design in production, purchase a license
-from the Stuxen listing on Webflow's template marketplace — treat this repo
-as a content/structure prototype until that's sorted out.
+The section layout and visual language follow the **Stuxen** Webflow template
+(by Digitexen), but **none of its code ships here**. Its compiled stylesheet
+was replaced by `css/core.css`, written for this site from scratch, and the
+template's demo assets were deleted along with the sections that used them.
+
+Note that the template's stylesheet is still present in this repository's git
+**history**, in the initial commit. Removing it from the working tree does not
+remove it from history — that needs the history rewritten or the project
+re-committed into a clean repo.

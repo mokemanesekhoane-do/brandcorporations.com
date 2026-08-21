@@ -6,29 +6,39 @@ dependencies beyond an optional dev-server script — edit the files directly.
 
 ## What this is
 
-The layout, spacing, typography and component styling are copied from the
-**Stuxen** Webflow template ("home-v1") to spec, per the client's request to
-reuse that exact design. `css/style.css` is Stuxen's own compiled CSS output
-— treat it as a design system, not boilerplate to rewrite. Only content,
-images and a handful of interaction behaviors (mobile menu, tabs, carousel)
-were added on top, in `css/custom.css` and `js/custom.js`.
+The section layout and visual language follow the **Stuxen** Webflow template
+("home-v1"), which the client asked us to match. **The template's compiled
+stylesheet is no longer in this repo.** It was replaced by `css/core.css`, an
+original stylesheet written for this site: only the ~130 classes the markup
+actually uses, with the design tokens named plainly. The old export was 173KB
+of which 84% was dead; core.css is 22KB.
+
+Two stylesheets load, in this order:
+- `css/core.css` — reset, design tokens, layout primitives, and the shared
+  components (nav, buttons, hero, about, projects, FAQ) plus small structural
+  shims for the `w-*` class names the exported markup still carries.
+- `css/custom.css` — everything built for this site since, and the overrides.
 
 Read `README.md` first for the full structure/content breakdown.
 
 ## Working in this codebase
 
-- **Preserve the class names from `css/style.css`** when editing `index.html`
-  — the whole visual design depends on them. If you need new styling, prefer
-  adding rules to `css/custom.css` (loaded after `style.css`, so it can
-  override) rather than editing `style.css` itself.
-- **Design tokens** live as CSS custom properties on `body` in
-  `css/style.css`: `--primary-clr` (accent), `--secondary-clr`
+- **Preserve the class names in the markup** when editing `index.html` — the
+  layout depends on them, and `core.css` only defines the ones in use. Prefer
+  adding rules to `css/custom.css` (loaded after `core.css`, so it wins)
+  rather than editing `core.css`.
+- **Order matters inside `core.css`:** the `w-*` shims are deliberately placed
+  *before* the component rules. Move them after and `.w-inline-block` /
+  `.w-tab-link` start overriding real components — the primary button collapses
+  to `inline-block` and the FAQ tabs pick up Webflow's default padding.
+- **Design tokens** live as CSS custom properties on `:root` in
+  `css/core.css`: `--primary-clr` (accent), `--secondary-clr`
   (#212121, text), `--white-smoke` (page bg), `--dark-70`/`--dark-16`/
   `--dark-12` (muted text / borders). Prefer referencing these over hardcoding
   colors.
 - **The accent is Brand's logo blue `#0878b8`**, not Stuxen's purple. It is
   retoned by overriding `--primary-clr` on `body` in `css/custom.css`
-  (`style.css` still declares the original `#5235f6` — leave it there). Every
+  (`core.css` declares the template's original `#5235f6` as the base). Every
   accent in the design system resolves through that one token, so recolouring
   happens in a single place; `--primary-dark`, `--primary-08` and
   `--primary-16` are companion tints defined next to it. The eight
@@ -70,7 +80,7 @@ Read `README.md` first for the full structure/content breakdown.
 
 Four areas were rebuilt from scratch and do **not** use the template's class
 names. They live entirely in `custom.css` / `custom.js`, so Stuxen's rules
-don't reach them — style them directly, don't hunt for a `style.css` hook.
+don't reach them — style them directly, don't hunt for a `core.css` hook.
 
 - **Services** (`#services`) — `.svc-*`. Five practice groups, each a card
   listing its offerings. The grid is **6 columns**: the first three cards
@@ -156,6 +166,7 @@ handler in `custom.js` is still needed — the FAQ accordion uses it.
   — everything must stay self-contained under `assets/`.
 - Google Fonts (Poppins) is loaded via a normal `<link>` in `<head>` — this is
   the one legitimate external dependency, leave it as-is.
-- Stuxen is a commercially licensed template (see README's Licensing note).
-  Don't represent this repo as cleared for production use without flagging
-  that to whoever's driving.
+- **Don't reintroduce the template's compiled CSS.** It was removed
+  deliberately: shipping it in a public repo redistributes a commercially
+  licensed asset. If a component needs a style that used to come from it,
+  write the rule in `core.css` or `custom.css`.
