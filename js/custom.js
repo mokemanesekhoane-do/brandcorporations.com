@@ -430,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function () {
           '<button class="rd-close" type="button" aria-label="Close article">&#10005;</button>' +
         '</header>' +
         '<div class="rd-body">' +
-          '<h2 class="rd-title" id="rd-title"></h2>' +
+          '<p class="rd-title" id="rd-title" role="heading" aria-level="2"></p>' +
           '<div class="rd-meta">' +
             '<span class="rd-avatar" aria-hidden="true"></span>' +
             '<span class="rd-meta-text"><span class="rd-meta-name"></span><span class="rd-meta-sub"></span></span>' +

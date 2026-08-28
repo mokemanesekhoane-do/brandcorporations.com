@@ -21,6 +21,11 @@ Then visit http://localhost:3000.
 
 ```
 index.html          Single-page site (all sections)
+404.html            Not-found page
+privacy.html        Privacy policy
+robots.txt          Crawler directives (points at the sitemap)
+sitemap.xml         Sitemap
+site.webmanifest    PWA/icon manifest
 assets/projects/      Real portfolio work — 10 category folders, responsive WebP
 assets/clients/       17 client logos, background-stripped transparent WebP
 css/core.css          Original stylesheet: reset, design tokens, layout
@@ -77,12 +82,16 @@ Real content (pulled from the current brandcorporations.com):
   icons rather than thumbnails.
 
 **Still outstanding** before this goes live:
+- Social links (point to generic facebook.com/instagram.com/etc. — swap in
+  real handles). They also feed the empty `sameAs` array in the JSON-LD.
+- Set the real domain: the canonical URL, OG tags, sitemap and JSON-LD all
+  assume `https://brandcorporations.com`. Change them together if it differs.
+- Have the privacy policy reviewed — it is an accurate plain-language draft,
+  not legal advice.
 - The Get in touch form has no backend — it validates client-side then falls
   back to `mailto:`. Point `data-endpoint` on `#get-in-touch` at a form
   service (Formspree, Netlify Forms, Basin) to have it POST instead.
 - FAQ answers (generic-but-reasonable; worth a review pass)
-- Social links (point to generic facebook.com/instagram.com/etc. — swap in
-  real handles)
 
 ## Licensing note
 

@@ -160,6 +160,31 @@ three-up `.hero-slider`; About uses `.about-v1-img`.
 **Testimonials and the blog carousel were deleted.** The generic `.w-tabs`
 handler in `custom.js` is still needed — the FAQ accordion uses it.
 
+## SEO / head
+
+The `<head>` carries canonical, Open Graph, Twitter Card, theme-color, a
+favicon set and a JSON-LD `ProfessionalService` block. **They all hardcode
+`https://brandcorporations.com`** — if the real domain differs, change the
+canonical, both `og:`/`twitter:` image URLs, the JSON-LD `url`/`logo`/`image`,
+`sitemap.xml` and `robots.txt` together.
+
+The JSON-LD `sameAs` array is deliberately empty: it should list the real
+social profile URLs, which the footer links do not have yet either.
+
+**The hero images are the LCP.** They carry `fetchpriority="high"` and must
+never be given `loading="lazy"` — all three were lazy-loaded before the audit,
+which was the single biggest performance defect on the site. They serve
+400/700/1200 derivatives via `srcset` (`hero-left` stops at 667, its source
+size — do not upscale it).
+
+Google Fonts requests exactly the five variants the CSS uses (300, 300 italic,
+400, 500, 600) with `display=swap` and preconnect to `fonts.gstatic.com`.
+Adding a weight to the CSS means adding it to that URL too.
+
+The favicon is **not** the wordmark — that is 765x426 and illegible at 16px.
+`assets/brand/favicon-*.png` is a purpose-built disc-and-B mark generated to
+match the brand blue.
+
 ## Constraints
 
 - Don't reintroduce Webflow-specific asset URLs (`cdn.prod.website-files.com`)

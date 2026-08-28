@@ -1328,3 +1328,52 @@ body.rd-lock { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .svc-card:hover, .ft-social:hover, .gt-submit:hover { transform: none; }
 }
+
+/* =========================================================================
+   ACCESSIBILITY & POLISH
+   ========================================================================= */
+
+/* Skip link — visually hidden until focused, so keyboard users can jump
+   past the nav instead of tabbing it on every page view. */
+.skip-link {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  z-index: 10000;
+  transform: translate(-50%, -120%);
+  padding: 12px 22px;
+  border-radius: 0 0 var(--radius-xs) var(--radius-xs);
+  background-color: var(--primary-clr);
+  color: var(--white);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+  transition: transform .2s ease;
+}
+.skip-link:focus { transform: translate(-50%, 0); outline: 2px solid var(--white); outline-offset: -5px; }
+
+/* The contact section's key labels sat at 4.39:1 on the page ground — just
+   under the 4.5:1 AA floor for text this size. The deeper blue clears it. */
+.gt-dk { color: var(--primary-dark); }
+
+/* .rd-title is a <p role="heading"> rather than an empty <h2> sitting in the
+   DOM before the reader is opened, so it needs the heading colour back. */
+.rd-title { color: var(--secondary-clr); }
+
+/* privacy links */
+.gt-privacy {
+  flex-basis: 100%;
+  margin: 4px 0 0;
+  color: var(--dark-70);
+  font-size: var(--text-xs);
+}
+.gt-privacy a { color: var(--primary-dark); text-decoration: underline; text-underline-offset: 2px; }
+.gt-privacy a:hover { color: var(--primary-clr); }
+.ft-legal { order: 2; }
+.ft-legal a {
+  color: rgba(255, 255, 255, .62);
+  font-size: var(--text-xs);
+  text-decoration: none;
+  transition: color .25s ease;
+}
+.ft-legal a:hover { color: var(--white); }

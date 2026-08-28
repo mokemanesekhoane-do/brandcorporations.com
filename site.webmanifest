@@ -1,0 +1,22 @@
+{
+  "name": "Brand Corporations",
+  "short_name": "Brand Corp",
+  "description": "Integrated creative and branding agency in Maseru, Lesotho.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f5f5",
+  "theme_color": "#0878b8",
+  "icons": [
+    {
+      "src": "/assets/brand/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/brand/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
