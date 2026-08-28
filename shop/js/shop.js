@@ -528,9 +528,9 @@
           toast('Enter your name and a valid email.', 'bad'); return;
         }
         S.auth.signIn({ name: val('name'), email: val('email'),
-                        company: val('company'), phone: val('phone') });
+                        company: val('company'), phone: val('phone'), role: 'buyer' });
         toast('Signed in.', 'ok');
-        location.hash = '#/orders';
+        location.hash = '#/dashboard';
       } else {
         S.auth.update({ name: val('name'), company: val('company'),
                         phone: val('phone'), address: val('address') });
@@ -619,11 +619,9 @@
                 </div>
               </li>`).join('')}
           </ol>
-          ${at < stages.length - 1 ? `<div class="track-demo">
-            <p>On the live system your production team moves this along. For this preview:</p>
-            <button class="btn btn-ghost btn-sm" type="button" id="advance">
-              Advance to &ldquo;${esc(stages[at + 1].label)}&rdquo;</button>
-          </div>` : ''}
+          ${at < stages.length - 1 ? `<p class="track-note">
+            Our production team updates this as your job moves through the studio.
+            You&rsquo;ll be emailed when it changes.</p>` : ''}
         </section>
 
         <div class="od">
@@ -652,11 +650,89 @@
         </div>
       </div>`;
 
-    const adv = document.getElementById('advance');
-    if (adv) adv.addEventListener('click', () => {
-      S.orders.advanceForDemo(o.id); render();
-      toast('Order status advanced.', 'ok');
-    });
+  }
+
+  /* =====================================================================
+     VIEW: buyer dashboard
+     ===================================================================== */
+  function viewDashboard() {
+    const user = S.auth.current();
+    if (!user) { location.hash = '#/account'; return; }
+
+    const list = S.orders.list();
+    const stages = S.orders.stages();
+    const spend = list.filter(o => o.payment.status === 'paid')
+      .reduce((s, o) => s + o.total, 0);
+    const inProd = list.filter(o => ['artwork', 'production', 'quality'].includes(o.stage)).length;
+    const owing = list.filter(o => o.payment.status !== 'paid');
+    const cartCount = S.cart.summary().count;
+
+    const tile = (n, label, tone) =>
+      `<div class="tile${tone ? ' tile-' + tone : ''}"><span class="tile-n">${n}</span>
+       <span class="tile-l">${label}</span></div>`;
+
+    main.innerHTML = `
+      <div class="v-wrap">
+        <div class="dash-head">
+          <div>
+            <span class="dash-hi">Welcome back</span>
+            <h1 class="v-title">${esc((user.name || 'there').split(' ')[0])}</h1>
+          </div>
+          <a class="btn btn-primary" href="#/">Start an order ${icon.arrow}</a>
+        </div>
+
+        <div class="tiles">
+          ${tile(list.length, 'Orders placed')}
+          ${tile(inProd, 'In production', inProd ? 'live' : '')}
+          ${tile(owing.length, 'Awaiting payment', owing.length ? 'warn' : '')}
+          ${tile(money(spend), 'Paid to date')}
+        </div>
+
+        ${owing.length ? `<div class="pay-banner">${icon.lock}<div>
+          <strong>${owing.length} order${owing.length === 1 ? '' : 's'} awaiting payment.</strong>
+          We&rsquo;ll email payment instructions &mdash; card payment is not connected on this
+          preview build.</div></div>` : ''}
+
+        <div class="dash-grid">
+          <section class="dash-panel">
+            <div class="dash-panel-head">
+              <h2 class="co-h">Recent orders</h2>
+              ${list.length > 3 ? `<a class="dash-more" href="#/orders">See all ${icon.arrow}</a>` : ''}
+            </div>
+            ${list.length ? `<div class="ord-list">` + list.slice(0, 3).map(o => {
+              const st = stages[S.orders.stageIndex(o.stage)];
+              return `<a class="ord" href="#/order/${o.id}">
+                <div class="ord-main">
+                  <span class="ord-ref">${esc(o.reference)}</span>
+                  <span class="ord-date">${new Date(o.placedAt).toLocaleDateString('en-GB',
+                    { day: 'numeric', month: 'short' })}</span>
+                  <span class="ord-items">${o.lines.length} item${o.lines.length === 1 ? '' : 's'}</span>
+                </div>
+                <div class="ord-side">
+                  <span class="pill pill-${esc(o.stage)}">${esc(st.label)}</span>
+                  <span class="ord-total">${money(o.total)}</span>${icon.arrow}
+                </div></a>`; }).join('') + `</div>`
+              : `<div class="empty"><p>You haven&rsquo;t ordered yet.</p>
+                   <a class="btn btn-primary" href="#/">Browse products ${icon.arrow}</a></div>`}
+          </section>
+
+          <aside class="dash-side">
+            <section class="dash-panel">
+              <h2 class="co-h">Your details</h2>
+              <p class="dash-kv"><span>Name</span>${esc(user.name || '—')}</p>
+              <p class="dash-kv"><span>Email</span>${esc(user.email)}</p>
+              ${user.company ? `<p class="dash-kv"><span>Company</span>${esc(user.company)}</p>` : ''}
+              ${user.phone ? `<p class="dash-kv"><span>Phone</span>${esc(user.phone)}</p>` : ''}
+              <a class="btn btn-ghost btn-block" href="#/account">Edit details</a>
+            </section>
+            ${cartCount ? `<section class="dash-panel">
+              <h2 class="co-h">Cart</h2>
+              <p class="dash-kv"><span>Waiting</span>${cartCount} item${cartCount === 1 ? '' : 's'}</p>
+              <a class="btn btn-primary btn-block" href="#/cart">Go to cart ${icon.arrow}</a>
+            </section>` : ''}
+          </aside>
+        </div>
+      </div>`;
   }
 
   function notFound() {
@@ -681,7 +757,8 @@
       case 'search':   viewCatalogue(null, decodeURIComponent(parts[1] || '')); break;
       case 'cart':     viewCart(); break;
       case 'checkout': viewCheckout(); break;
-      case 'account':  viewAccount(); break;
+      case 'account':   viewAccount(); break;
+      case 'dashboard': viewDashboard(); break;
       case 'orders':   viewOrders(); break;
       case 'order':    viewOrder(parts[1]); break;
       default:         notFound();
@@ -705,7 +782,9 @@
   /* ---------- wiring ---------- */
   window.addEventListener('hashchange', render);
   window.addEventListener('cart:change', paintChrome);
-  window.addEventListener('auth:change', paintChrome);
+  // a change of identity changes what most views should show, so re-render
+  // the whole view rather than only the header chrome
+  window.addEventListener('auth:change', render);
 
   document.querySelector('.shop-search').addEventListener('submit', e => {
     e.preventDefault();

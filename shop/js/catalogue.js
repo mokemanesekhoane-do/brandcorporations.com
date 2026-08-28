@@ -401,4 +401,20 @@ const ORDER_STAGES = [
   { id: 'completed',  label: 'Completed',         blurb: 'Delivered or collected. Thank you.' },
 ];
 
-window.SHOP_DATA = { CURRENCY, CATEGORIES, PRODUCTS, ORDER_STAGES };
+/* Staff accounts the admin gate recognises.
+   DEMO ONLY. On the real system, staff identity and role come from the server
+   on every request — never from a list shipped to the browser. */
+const STAFF = [
+  { email: 'admin@brandcorporations.com', name: 'Sekhoane Mokemane', role: 'admin', title: 'Administrator' },
+  { email: 'studio@brandcorporations.com', name: 'Studio', role: 'admin', title: 'Production' },
+];
+
+/* How a product can be sold. Print is made to order; merchandise may be held. */
+const AVAILABILITY = [
+  { id: 'made-to-order', label: 'Made to order', sellable: true },
+  { id: 'in-stock',      label: 'In stock',      sellable: true },
+  { id: 'out-of-stock',  label: 'Out of stock',  sellable: false },
+  { id: 'draft',         label: 'Draft (hidden)', sellable: false },
+];
+
+window.SHOP_DATA = { CURRENCY, CATEGORIES, PRODUCTS, ORDER_STAGES, STAFF, AVAILABILITY };

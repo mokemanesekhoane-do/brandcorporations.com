@@ -1,4 +1,19 @@
-# Brand Corporations — Online Shop (preview build)
+
+
+## Two dashboards
+
+**Buyer** () — browse, product detail, cart, checkout, account,
+ with order tiles and recent orders, order history, and
+seven-stage tracking. A buyer can read only their own orders and cannot move
+one through production.
+
+**Admin** () — overview with KPIs and a production pipeline,
+orders (filter by stage/payment, open one, move it through stages, reconcile
+payment), products (create, edit, delete, specs, options, both pricing models,
+availability and stock), customers, and an activity log.
+
+Setting a product to *out of stock* or *draft* removes it from the buyer
+catalogue and the cart refuses it.# Brand Corporations — Online Shop (preview build)
 
 A standalone module. It is **not** linked from the main site and nothing in the
 main site depends on it — delete the `shop/` folder and the website is
@@ -33,6 +48,22 @@ Accounts, orders and the cart live in `localStorage`, so they exist **in one
 browser only**. Two customers on two machines cannot see the same order, and
 the status never advances by itself — the tracking screen has a demo button
 that stands in for your production team.
+
+## The security boundary
+
+**Nothing enforced in the browser is security.** The staff gate checks an email
+against a list shipped to the client; anyone can read or bypass it from the
+console. That is inherent to a static build, and the gate says so on screen.
+
+What *is* built is the right structure. Every privileged operation goes through
+, so there is exactly one place where authorisation belongs.
+When the backend lands:
+
+- Issue the session server-side (httpOnly cookie). Never a role in storage.
+- Read the role from the session **on the server**, for every request.
+- Re-check it inside every admin endpoint. A hidden button is not access control.
+- Recompute order totals server-side from the catalogue at checkout.
+- Let only staff endpoints write production status.
 
 ## Wiring it to a backend
 
