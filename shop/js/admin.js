@@ -47,7 +47,7 @@
   function showShell() {
     gate.hidden = true;
     shell.hidden = false;
-    const u = S.auth.current();
+    const u = S.auth.staff();
     document.getElementById('side-name').textContent = u.name || u.email;
     document.getElementById('side-role').textContent = u.title || 'Administrator';
     document.getElementById('side-avatar').textContent =
@@ -66,7 +66,7 @@
   });
 
   document.getElementById('signout').addEventListener('click', () => {
-    S.auth.signOut();
+    S.auth.signOutStaff();
     location.hash = '#/';
     showGate();
   });

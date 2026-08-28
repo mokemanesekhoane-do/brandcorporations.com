@@ -41,7 +41,8 @@
 
   const KEY = {
     cart:     'bc_shop_cart',
-    user:     'bc_shop_user',
+    user:     'bc_shop_user',      // buyer profile
+    staff:    'bc_shop_staff',     // staff session, deliberately separate
     orders:   'bc_shop_orders',
     products: 'bc_shop_products',
     log:      'bc_shop_activity',
@@ -210,18 +211,29 @@
 
   /* =======================================================================
      AUTH  —  identity only, NOT authentication
-     The session carries a role so the two dashboards can be kept apart.
-     On a real deployment the role comes from the server session; a role
-     stored here is a convenience for the UI, never a permission.
+
+     The buyer profile and the staff session are kept in SEPARATE keys, on
+     purpose. One shared session meant that signing into the admin dashboard
+     also made you the customer over on the shop: the buyer dashboard greeted
+     the administrator by name, and a checkout would have filed the order
+     under a staff email. They are different roles on different surfaces, so
+     they get different sessions and can be held at the same time.
+
+       auth.current()  -> the buyer profile   (used by the shop)
+       auth.staff()    -> the staff session   (used by the admin dashboard)
+
+     On a real deployment both come from a server session cookie and the role
+     is read server-side on every request. A role stored here is a
+     convenience for the UI, never a permission.
      ======================================================================= */
   const auth = {
     isDemo: true,
-    current: () => read(KEY.user, null),
-    role: () => (read(KEY.user, null) || {}).role || 'guest',
-    isAdmin: () => auth.role() === 'admin',
     staffDirectory: () => clone(STAFF),
 
-    /* buyer sign-in: any email creates a local profile */
+    /* ---- buyer ---- */
+    current: () => read(KEY.user, null),
+    role: () => (read(KEY.user, null) || {}).role || 'guest',
+
     signIn(profile) {
       if (!profile || !profile.email) throw new Error('email required');
       const existing = read(KEY.user, null);
@@ -229,37 +241,46 @@
         id: 'local-' + Date.now().toString(36),
         role: 'buyer',
         createdAt: nowISO(),
-      }, existing || {}, profile);
-      if (!user.role) user.role = 'buyer';
+      }, existing || {}, profile, { role: 'buyer' });
       write(KEY.user, user);
       emit('auth:change');
       return clone(user);
-    },
-
-    /* staff sign-in: the email must be in the STAFF list.
-       This is a demo gate so the dashboards stay separate — it protects
-       nothing. Replace with POST /api/auth/login returning a session cookie,
-       and re-check the role on every admin endpoint. */
-    signInStaff(email) {
-      const member = STAFF.find(s => s.email.toLowerCase() === String(email || '').toLowerCase().trim());
-      if (!member) return { ok: false, message: 'That email is not on the staff list.' };
-      const user = Object.assign({ id: 'staff-' + member.email, createdAt: nowISO() }, member);
-      write(KEY.user, user);
-      emit('auth:change');
-      return { ok: true, user: clone(user) };
     },
 
     signOut() {
       try { localStorage.removeItem(KEY.user); } catch (e) {}
       emit('auth:change');
     },
+
     update(patch) {
       const user = read(KEY.user, null);
       if (!user) return null;
-      const next = Object.assign({}, user, patch);
+      const next = Object.assign({}, user, patch, { role: 'buyer' });
       write(KEY.user, next);
       emit('auth:change');
       return clone(next);
+    },
+
+    /* ---- staff ---- */
+    staff: () => read(KEY.staff, null),
+    isAdmin: () => (read(KEY.staff, null) || {}).role === 'admin',
+
+    /* The email must be in the STAFF list. This is a demo gate so the two
+       dashboards stay apart — it protects nothing. Replace with
+       POST /api/auth/login returning a session cookie, and re-check the role
+       on every admin endpoint. */
+    signInStaff(email) {
+      const member = STAFF.find(s => s.email.toLowerCase() === String(email || '').toLowerCase().trim());
+      if (!member) return { ok: false, message: 'That email is not on the staff list.' };
+      const user = Object.assign({ id: 'staff-' + member.email, createdAt: nowISO() }, member);
+      write(KEY.staff, user);
+      emit('auth:change');
+      return { ok: true, user: clone(user) };
+    },
+
+    signOutStaff() {
+      try { localStorage.removeItem(KEY.staff); } catch (e) {}
+      emit('auth:change');
     },
   };
 
@@ -270,12 +291,13 @@
      check one obvious home. It is NOT protection — see the header.
      ======================================================================= */
   function guard(action) {
-    if (!auth.isAdmin()) {
+    const staff = auth.staff();
+    if (!staff || staff.role !== 'admin') {
       const err = new Error('Not permitted: ' + action + ' requires an administrator session.');
       err.code = 'FORBIDDEN';
       throw err;
     }
-    return auth.current();
+    return staff;
   }
 
   /* =======================================================================

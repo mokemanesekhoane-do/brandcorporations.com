@@ -58,6 +58,23 @@ unit price.
 against a list shipped to the client; anyone can read or bypass it from the
 console. That is inherent to a static build, and the gate says so on screen.
 
+### Two separate sessions
+
+The buyer profile and the staff session live in **different storage keys**
+(`bc_shop_user` and `bc_shop_staff`) and are read through different methods:
+
+```
+Store.auth.current()   the buyer profile   (the shop)
+Store.auth.staff()     the staff session   (the admin dashboard)
+Store.auth.isAdmin()   true only from the staff session
+```
+
+They are independent in both directions. Signing into the admin dashboard does
+not make you a customer — the shop still shows *Sign in*, and a checkout would
+not file the order under a staff email. Signing out of one leaves the other
+alone. A buyer profile cannot carry an admin role: `signIn()` and `update()`
+force `role: 'buyer'`, so a role cannot be smuggled in through the profile.
+
 What *is* built is the right structure. Every privileged operation passes
 through `Store.guard()`, so authorisation has exactly one home. When the
 backend lands:
