@@ -1336,7 +1336,9 @@ body.rd-lock { overflow: hidden; }
 /* Skip link — visually hidden until focused, so keyboard users can jump
    past the nav instead of tabbing it on every page view. */
 .skip-link {
-  position: absolute;
+  /* fixed, not absolute: an absolute skip link scrolls away with the
+     document, so shift-tabbing back to it after scrolling finds nothing */
+  position: fixed;
   left: 50%;
   top: 0;
   z-index: 10000;

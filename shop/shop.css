@@ -474,3 +474,27 @@ textarea.co-input { resize: vertical; }
   .p-card:hover .p-card-img { transform: none; }
   .btn:hover svg { transform: none; }
 }
+
+/* ---------- skip link ----------
+   The shop does not load the site's custom.css, where the main .skip-link
+   rule lives, so it needs its own here — without it the link renders as
+   plain visible text above the header. */
+.skip-link {
+  /* fixed, not absolute: an absolute skip link scrolls away with the
+     document, so shift-tabbing back to it after scrolling finds nothing */
+  position: fixed;
+  left: 50%;
+  top: 0;
+  z-index: 10000;
+  transform: translate(-50%, -120%);
+  padding: 12px 22px;
+  border-radius: 0 0 var(--radius-xs) var(--radius-xs);
+  background-color: var(--primary-clr);
+  color: var(--white);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+  transition: transform .2s ease;
+}
+.skip-link:focus { transform: translate(-50%, 0); outline: 2px solid var(--white); outline-offset: -5px; }
+@media (prefers-reduced-motion: reduce) { .skip-link { transition: none; } }

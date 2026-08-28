@@ -689,9 +689,16 @@
     paintChrome();
     window.scrollTo(0, 0);
     const h1 = main.querySelector('h1');
-    // the hero h1 contains a <br/>, so collapse whitespace rather than
-    // letting the two lines run together in the tab title
-    const heading = h1 ? h1.textContent.replace(/s+/g, ' ').trim() : '';
+    // A <br> contributes no whitespace to textContent, so the two lines of the
+    // hero heading would run together in the tab title. Turn breaks into
+    // spaces before stripping the remaining tags.
+    const heading = h1
+      ? h1.innerHTML
+          .replace(/<br\s*\/?>/gi, ' ')
+          .replace(/<[^>]+>/g, '')
+          .replace(/\s+/g, ' ')
+          .trim()
+      : '';
     document.title = (heading ? heading + ' - ' : '') + 'Shop - Brand Corporations';
   }
 
